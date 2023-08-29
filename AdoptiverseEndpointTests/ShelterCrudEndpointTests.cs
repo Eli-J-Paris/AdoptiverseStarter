@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using AdoptiverseAPI.Models;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace AdoptiverseEndpointTests
 {
@@ -43,6 +45,25 @@ namespace AdoptiverseEndpointTests
         [Fact]
         public async void GetShelters_ReturnsJSONListOfAllShelters()
         {
+            HttpClient client = _factory.CreateClient();
+            AdoptiverseApiContext context = GetDbContext();
+
+            Shelter shelter1 = new Shelter { Name = "Smart Friend League", Rank = 3, City = "denver" };
+            Shelter shelter2 = new Shelter { Name = "BigBrain Friend League", Rank = 9, City = "Aurora" };
+
+            List<Shelter> shelters = new() { shelter1, shelter2 };
+            context.AddRange(shelters);
+            context.SaveChanges();
+
+            //act
+            HttpResponseMessage response = await client.GetAsync("/api/shelters");
+            string content = await response.Content.ReadAsStringAsync();
+
+            string expected = ObjectToJson(shelters);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(expected, content);
 
         }
     }
