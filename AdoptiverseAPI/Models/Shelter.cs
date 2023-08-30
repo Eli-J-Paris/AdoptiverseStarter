@@ -7,7 +7,7 @@
         public DateTime UpdatedAt { get; set; }
         public bool HasFosterProgram { get; set; }
         public int Rank { get; set; }
-        public string City { get; set; }
+        public string?City { get; set; }
         public string Name { get; set; }
 
 
